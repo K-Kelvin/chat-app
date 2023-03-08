@@ -1,0 +1,12 @@
+tasks:
+    - before: pip install -r requirements.txt
+      command: python manage.py runserver
+
+ports:
+    - port: 8000
+      visibility: private
+      onOpen: open-browser
+
+    - port: 8020
+      visibility: private
+      onOpen: open-browser
