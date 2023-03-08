@@ -10,9 +10,14 @@ class ChatConsumer(WebsocketConsumer):
         self.room_group_name = "chat_%s" % self.room_name
 
         # Join room group
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name, self.channel_name
-        )
+        print("self.room_name", self.room_name)
+        try:
+            async_to_sync(self.channel_layer.group_add)(
+                self.room_group_name, self.channel_name
+            )
+        except:
+            print("error: consumers.py line 19")
+        print("self.room_group_name", self.room_group_name)
 
         self.accept()
 

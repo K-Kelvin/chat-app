@@ -25,21 +25,21 @@ SECRET_KEY = 'django-insecure-7%w31jok+3exdks7ek^qm0$esx@=j#rld&uwxq_-j-t=b13w1)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+HOST = "k-kelvin-animated-space-invention-vwq7vvgw5vvfvx6-8000.preview.app.github.dev"
+ALLOWED_HOSTS = [HOST, "127.0.0.1", "localhost"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
     "daphne",
+    "chat",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    "chat",
 ]
 
 MIDDLEWARE = [
@@ -77,7 +77,8 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            # "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("k-kelvin-animated-space-invention-vwq7vvgw5vvfvx6-6379.preview.app.github.dev", 6379)],
         },
     },
 }
