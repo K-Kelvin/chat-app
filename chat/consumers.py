@@ -1,6 +1,6 @@
 import json
 
-from channels.exceptions import StopConsumer
+from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 
@@ -10,11 +10,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_group_name = "chat_%s" % self.room_name
 
         # Join room group
-        print("self.room_name", self.room_name)
         await self.channel_layer.group_add(
                 self.room_group_name, self.channel_name
             )
-        print("self.room_group_name", self.room_group_name)
 
         await self.accept()
 
@@ -23,7 +21,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
         )
-        raise StopConsumer()
 
     # Receive message from WebSocket
     async def receive(self, text_data):
@@ -32,12 +29,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Send message to room group
         await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat_message", "message": message}
+            self.room_group_name, {
+                "type": "chat_message", 
+                "message": message,
+                "recipient": self.room_name,
+                "sender": self.scope["user"].username,
+            }
         )
 
     # Receive message from room group
     async def chat_message(self, event):
         message = event["message"]
-
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({"message": message}))
+        await self.send(text_data=json.dumps({
+            "message": message,
+            "sender": event["sender"],
+            "recipient": event["recipient"],
+        }))
+
+    async def store_message(self, sender, recipient, message):
+        return Message.objects.create(sender=sender, recipient=recipient, message=message)
