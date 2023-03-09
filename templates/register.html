@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block title %} Chat App | Register {% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'auth.css' %}">
+{% endblock head %}
+
+{% block body %}
+{% with username=form.username.value|default:'' email=form.email.value|default:'' password1=form.password1.value|default:'' password2=form.password2.value|default:'' %}
+<div class="auth-container">
+    <div class="auth-inner-container">
+        {% include 'messages.html' %}
+        {% comment %} <div class="mb-3">
+            <img src="{% static 'img/logo.png' %}" alt="logo" width="200" height="auto" class="mx-auto d-block">
+        </div> {% endcomment %}
+        <form method="post" action="" class="auth-form bd-highlight">
+            {% csrf_token %}
+            <h3 style="text-align: center; color: rgba(0,0,0,.65);">Register</h3>
+            <div class="mb-3">
+                <label for="id_username" class="form-label">Username</label>
+                <input type="text" name="username" maxlength="150" autofocus="" 
+                    class="form-control" required id="id_username" 
+                    placeholder="Enter username" value="{{ username }}">
+            </div>
+            <div class="mb-3">
+                <label for="id_email" class="form-label">Email</label>
+                <input type="email" required class="form-control" name="email" 
+                    id="id_email" maxlength="254" placeholder="Enter email" value="{{ email }}">
+            </div>
+            <div class="mb-3">
+                <label for="id_password1" class="form-label">Password</label>
+                <div class="position-relative">
+                    <input type="password" required class="form-control" name="password1" 
+                        id="id_password1" autocomplete="new-password" placeholder="Enter password" value="{{ password1 }}">
+                    <span class="material-icons eye-icon hide-icon" data-action="hide" 
+                        onclick="hide('id_password1', 1)">visibility</span>
+                    <span class="material-icons eye-icon" data-action="show" 
+                        onclick="show('id_password1', 1)">visibility_off</span>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="id_password2" class="form-label">Confirm Password</label>
+                <div class="position-relative">
+                    <input type="password" required class="form-control" name="password2" 
+                        id="id_password2" autocomplete="new-password" placeholder="Confirm password" value="{{ password2 }}">
+                    <span class="material-icons eye-icon hide-icon" data-action="hide" 
+                        onclick="hide('id_password2', 3)">visibility</span>
+                    <span class="material-icons eye-icon" data-action="show" 
+                        onclick="show('id_password2', 3)">visibility_off</span>
+                </div>
+            </div>
+
+            <div class="signup_login mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="id_remember_me">
+                    <label class="form-check-label" for="id_remember_me">
+                        Remember me
+                    </label>
+                </div>
+
+                <a href="{% url 'users:login' %}" class="d-block ms-auto">Login<a/>
+            </div>
+
+            <button type="submit" class="btn btn-primary mx-auto d-block" id="submit">Sign up</button>
+        </form>
+    </div>
+</div>
+{% endwith %}
+
+<script>
+    const eyeIcons = document.querySelectorAll("span.material-icons.eye-icon");
+    function hide(id, n = 1){
+        const passInput = document.getElementById(`${id}`)
+        passInput.type = "password";
+        eyeIcons[n-1].classList.add("hide-icon");
+        eyeIcons[n].classList.remove("hide-icon");
+    }
+    function show(id, n = 1){
+        const passInput = document.getElementById(`${id}`)
+        passInput.type = "text";
+        eyeIcons[n].classList.add("hide-icon");
+        eyeIcons[n-1].classList.remove("hide-icon");
+    }
+</script>
+{% endblock body %}

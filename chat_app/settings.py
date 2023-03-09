@@ -28,11 +28,17 @@ DEBUG = True
 HOST = "k-kelvin-animated-space-invention-vwq7vvgw5vvfvx6-8000.preview.app.github.dev"
 ALLOWED_HOSTS = [HOST, "127.0.0.1", "localhost"]
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [ "https://k-kelvin-animated-space-invention-vwq7vvgw5vvfvx6-8000.preview.app.github.dev" ]
+
 
 # Application definition
 
 INSTALLED_APPS = [
     "daphne",
+    "users",
     "chat",
     "channels",
     'django.contrib.admin',
@@ -41,7 +47,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    "crispy_forms",
+    "crispy_bootstrap5",
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -130,8 +142,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [ BASE_DIR / 'static' ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+HELP_EMAIL = "nivleknatech@gmail.com"
+
+LOGIN_URL = 'users:login'
+
+LOGIN_REDIRECT_URL = 'chat:index'
