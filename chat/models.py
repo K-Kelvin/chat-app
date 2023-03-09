@@ -37,3 +37,49 @@ class Message(models.Model):
         if self.sender.id == request.user.id:
             return True
         return False
+
+
+class RoomMember(models.Model):
+    room = models.ForeignKey("Room", on_delete=models.CASCADE, related_name="room")
+    member = models.ForeignKey(User, on_delete=models.CASCADE, related_name="member")
+
+    def __str__(self):
+        return f'<Room<{self.room_id}>: User<{self.member}>/>'
+
+
+class Room(models.Model):
+    title = models.CharField(max_length=86)
+    description = models.CharField(max_length=324)
+    is_group = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '<Room: {self.pk}>'
+
+    def add_member(self, user):
+        ''' Handle adding a member to a room '''
+        if self.is_group:
+            # check if limit is reached
+            # add member if not
+            # RoomMember.objects.create(room=self, member=user)
+            pass
+        else:
+            # if (self.room_member_set.count() < 2)
+                # member = RoomMember.objects.create(room=self, member=user)
+                # self.room_member_set.add(member=user)
+            pass
+
+    def has_member(self, member):
+        ''' Check if a member exists in a room '''
+        # if member in self.room_member_set
+        # return True
+        # otherwise
+        return False
+
+    def get_inbox_id(self, member1, member2):
+        ''' Check if both members are in a room which is not a group '''
+        # if both member 1 and member2 are in a room which is not a group
+        # return the room id
+        # otherwise return false
+        # add the members to room 
+        # return the room id
+        pass
