@@ -46,14 +46,27 @@ class RoomMember(models.Model):
     def __str__(self):
         return f'<Room<{self.room_id}>: User<{self.member}>/>'
 
+    def has_member(member):
+        found = RoomMember.objects.filter(member=member)
+        if len(found) > 0:
+            return True
+        return False
+
+    def has_member_and_room(member, room):
+        found = RoomMember.objects.filter(member=member, room=room)
+        if len(found) > 0:
+            return True
+        return False
+
 
 class Room(models.Model):
     title = models.CharField(max_length=86)
     description = models.CharField(max_length=324)
     is_group = models.BooleanField(default=False)
+    hash = models.CharField(max_length=64, null=True)
 
     def __str__(self):
-        return '<Room: {self.pk}>'
+        return f'<Room: {self.pk}>'
 
     def add_member(self, user):
         ''' Handle adding a member to a room '''
@@ -63,23 +76,24 @@ class Room(models.Model):
             # RoomMember.objects.create(room=self, member=user)
             pass
         else:
-            # if (self.room_member_set.count() < 2)
-                # member = RoomMember.objects.create(room=self, member=user)
-                # self.room_member_set.add(member=user)
-            pass
+            if len(self.roommember_set) < 2:
+                RoomMember.objects.create(room=self, member=user)
+                return True
+            return False
 
     def has_member(self, member):
         ''' Check if a member exists in a room '''
-        # if member in self.room_member_set
-        # return True
-        # otherwise
-        return False
+        return RoomMember.has_member_and_room(member, self)
 
-    def get_inbox_id(self, member1, member2):
-        ''' Check if both members are in a room which is not a group '''
-        # if both member 1 and member2 are in a room which is not a group
-        # return the room id
-        # otherwise return false
-        # add the members to room 
-        # return the room id
-        pass
+    def get_or_create(username1, username2):
+        lst = [username1, username2]
+        lst.sort()
+        hash = "-".join(lst)
+        room = Room.objects.get_or_create(hash=hash)
+
+        user1 = User.objects.get(username=username1)
+        user2 = User.objects.get(username=username2)
+
+        RoomMember.objects.get_or_create(room=room, member=user1)
+        RoomMember.objects.get_or_create(room=room, member=user2)
+        return room.id

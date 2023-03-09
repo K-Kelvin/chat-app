@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Message
+from .models import Message, Room
 
 @login_required
 def index(request):
     ''' Initial page of the chat app'''
+    print(Room)
     users = User.objects.all().exclude(username=request.user) # other users except the current user
     return render(request, "chat/chat.html", {
         "users": users,
