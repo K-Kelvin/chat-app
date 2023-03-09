@@ -5,10 +5,12 @@ async function populateBadWords() {
         const response = await fetch(
             "https://docs.google.com/spreadsheets/d/1hIEi2YG3ydav1E06Bzf2mQbGZ12kh2fe4ISgLg_UBuM/export?format=csv"
         );
-        const data = await response.json()
-        const lines = data.split("\n");
-        badWords = lines.map((line) => line.split(",")[0]);
-        return badWords;
+        // const data = await response.json()
+        console.log(response)
+        // const lines = data.split("\n");
+        // badWords = lines.map((line) => line.split(",")[0]);
+        // console.log(badWords)
+        // return badWords;
     } catch (error) {
         console.error(error);
     }
@@ -20,7 +22,7 @@ function cussWordFound(input) {
         return false;
     }
 
-    input = input
+    let input = input
         .replace(/1/g, "i")
         .replace(/!/g, "i")
         .replace(/3/g, "e")
