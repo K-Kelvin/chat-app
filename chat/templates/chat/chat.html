@@ -1,7 +1,14 @@
-{% extends "base.html" %} {% load static %} {% block body %}
+{% extends "base.html" %} 
+{% load static %} 
+
+{% block head %}
+<script src="{% static 'checkProfanity.js' %}"></script>
+{% endblock head %}
+
+{% block body %}
 <section style="background-color: var(--primary-color); height: 100%">
 	<div class="container">
-		<p class="text-white">HiChat</p>
+		<p class="text-white" style="font-size: 2rem">HiChat</p>
 	</div>
 	<div class="container py-5 pt-1">
 		<div class="row">
@@ -316,7 +323,8 @@
 										overflow: auto;
 									"
 								>
-									{% include '' %}
+									{% include 'chat/message.html' with sent=True %}
+									{% include 'chat/message.html' with send=False %}
 									<div
 										class="d-flex flex-row justify-content-start"
 									>
