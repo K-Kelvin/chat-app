@@ -155,3 +155,7 @@ HELP_EMAIL = "nivleknatech@gmail.com"
 LOGIN_URL = 'users:login'
 
 LOGIN_REDIRECT_URL = 'chat:index'
+
+LOGOUT_URL = 'logout'
+
+LOGOUT_REDIRECT_URL = '/'
