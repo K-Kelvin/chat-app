@@ -9,7 +9,7 @@
 
 {% block body %}
 {% with username=form.username.value|default:'' email=form.email.value|default:'' password1=form.password1.value|default:'' password2=form.password2.value|default:'' %}
-<div class="auth-container">
+<div class="auth-container mt-4">
     <div class="auth-inner-container">
         {% include 'messages.html' %}
         {% comment %} <div class="mb-3">
