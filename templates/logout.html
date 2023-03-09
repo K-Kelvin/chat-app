@@ -1,0 +1,42 @@
+{% extends 'base.html' %} 
+
+{% block title %} Chat App | Logout {% endblock title %} 
+
+{% block head %}
+<style>
+    body {
+        background: var(--primary-color);
+    }
+    .content-container {
+        padding: 6rem 1rem;
+        display: flex;
+        justify-content: center;
+    }
+    .center {
+        font-size: 1.125rem;
+        text-align: center;
+        color: var(--white);
+    }
+    .center a {
+        color: orange;
+    }
+</style>
+{% endblock head %} 
+
+{% block body %}
+<div class="content-container">
+    {% if user.is_authenticated %}
+    <div class="center">
+        <p>Logout failed, you are still authenticated.</p>
+        <a class="d-block ml-2" href="{% url 'chat:index' %}">Go to Home</a>
+    </div>
+
+    {% else %}
+    <div class="center">
+        <p>You have been logged out successfully</p>
+        <a class="d-block ml-2" href="{% url 'users:login' %}">Log back in</a>
+    </div>
+    
+    {% endif %}
+</div>
+{% endblock body %}
