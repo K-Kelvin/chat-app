@@ -1,0 +1,70 @@
+body {
+	background-color: var(--primary-color);
+	overflow: auto !important;
+}
+.auth-container {
+	min-height: 100vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+	display: flex;
+	/* align-items: center; */
+	justify-content: center;
+}
+.auth-inner-container {
+	margin: 1rem;
+	width: 100%;
+	max-width: 400px;
+}
+
+.auth-form {
+	border-radius: 0.75rem; /* 12px */
+	padding: 1rem;
+	background-color: var(--white);
+}
+/* error messages */
+.messages {
+	position: absolute;
+	z-index: 100;
+	left: 50%;
+	top: 60px;
+	transform: translateX(-50%);
+}
+.signup_login {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 1rem;
+}
+.signup_login > a {
+	text-decoration: none;
+	color: var(--primary-color);
+}
+.signup_login > a:hover {
+	text-decoration: underline;
+	color: var(--primary-color-dark);
+}
+
+/* submit button */
+#submit {
+	background-color: var(--primary-color);
+}
+#submit:hover {
+	background-color: var(--primary-color-dark);
+}
+
+/* show and hide password icons */
+.eye-icon {
+	display: block;
+	position: absolute;
+	top: 50%;
+	right: 1rem;
+	transform: translateY(-50%);
+	color: rgba(0, 0, 0, 0.45);
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	cursor: pointer;
+}
+.hide-icon {
+	display: none;
+}

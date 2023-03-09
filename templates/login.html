@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block title %} Chat App | Login {% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'auth.css' %}">
+{% endblock head %}
+
+{% block body %}
+<div class="auth-container">
+    <div class="auth-inner-container">
+        {% include 'messages.html' %}
+        {% comment %} <div class="mb-3">
+            <img src="{% static 'img/logo.png' %}" alt="logo" width="200" height="auto" class="mx-auto d-block">
+        </div> {% endcomment %}
+        <form method="post" action="" class="auth-form bd-highlight">
+            {% csrf_token %}
+            <h3 style="text-align: center; color: rgba(0,0,0,.65);">Login</h3>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" name="username" autofocus="" autocapitalize="none" 
+                    autocomplete="username" maxlength="150" class="form-control" 
+                    placeholder="Enter username" required="" id="id_username" value="{{ username }}">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <div class="position-relative">
+                    <input type="password" required class="form-control" name="password" autocomplete="current-password" 
+                        id="id_password" placeholder="Enter password" value="{{ password }}" data-toggle="password">
+                    <span class="material-icons eye-icon hide-icon" data-action="hide">visibility</span>
+                    <span class="material-icons eye-icon" data-action="show">visibility_off</span>
+                </div>
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="remember-me">
+                <label class="form-check-label" for="remember-me">
+                    Remember me
+                </label>
+            </div>
+
+            <div class="signup_login mb-3">
+                {% comment %} <a href="{% url 'password_reset' %}" class="d-block me-auto">Forgot password?<a/> {% endcomment %}
+                <a href="{% url 'users:register' %}" class="d-block ms-auto">Sign up<a/>
+            </div>
+
+            <button type="submit" class="btn btn-primary mx-auto d-block" id="submit">Login</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const passInput = document.querySelector("[data-toggle='password']")
+    const eyeIcon = document.querySelector("[data-action='hide']")
+    const eyeOffIcon = document.querySelector("[data-action='show']")
+    eyeIcon.onclick = function (){
+        passInput.type = "password";
+        eyeIcon.classList.add("hide-icon");
+        eyeOffIcon.classList.remove("hide-icon");
+    }
+    eyeOffIcon.onclick = function (){
+        passInput.type = "text";
+        eyeOffIcon.classList.add("hide-icon");
+        eyeIcon.classList.remove("hide-icon");
+    }
+</script>
+{% endblock body %}
