@@ -1,5 +1,6 @@
 import json
 
+from channels.exceptions import StopConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 
@@ -22,6 +23,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
         )
+        raise StopConsumer()
 
     # Receive message from WebSocket
     async def receive(self, text_data):
