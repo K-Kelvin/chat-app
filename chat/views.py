@@ -6,4 +6,4 @@ def index(request):
 
 def room(request, room_name):
     ''' Render chat room UI and logic'''
-    return render(request, "chat/room.html", {"room_name": room_name})
+    return render(request, "chat/chat.html", {"room_name": room_name})
