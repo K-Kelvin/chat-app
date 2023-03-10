@@ -15,6 +15,20 @@ class Message(models.Model):
     def __str__(self):
         return f'{self.message}'
 
+    def sent(self, request):
+        if self.sender.id == request.user.id:
+            return True
+        return False
+
+    @staticmethod
+    def add_new(sender_uname, recipient_uname, message):
+        ''' Save messages to the database once provided sender and receipient usernames '''
+        sender = User.objects.get(username=sender_uname)
+        recipient = User.objects.get(username=recipient_uname)
+        message = Message.objects.create(sender=sender, recipient=recipient, message=message)
+        return message
+
+    @staticmethod
     def get_all_messages(id_1, id_2):
         ''' Gets all messages between users with id_1 and id_2 '''
         messages = []
@@ -33,11 +47,6 @@ class Message(models.Model):
         messages.sort(key=lambda x: x.date, reverse=False)
         return messages
 
-    def sent(self, request):
-        if self.sender.id == request.user.id:
-            return True
-        return False
-
 
 class RoomMember(models.Model):
     room = models.ForeignKey("Room", on_delete=models.CASCADE, related_name="room")
@@ -46,12 +55,14 @@ class RoomMember(models.Model):
     def __str__(self):
         return f'<Room<{self.room_id}>: User<{self.member}>/>'
 
+    @staticmethod
     def has_member(member):
         found = RoomMember.objects.filter(member=member)
         if len(found) > 0:
             return True
         return False
 
+    @staticmethod
     def has_member_and_room(member, room):
         found = RoomMember.objects.filter(member=member, room=room)
         if len(found) > 0:
@@ -85,15 +96,20 @@ class Room(models.Model):
         ''' Check if a member exists in a room '''
         return RoomMember.has_member_and_room(member, self)
 
+    @staticmethod
     def get_or_create(username1, username2):
+        ''' Get a room id having both user1 and user2, if it exists, otherwise create it '''
         lst = [username1, username2]
         lst.sort()
         hash = "-".join(lst)
-        room = Room.objects.get_or_create(hash=hash)
+        try:
+            room = Room.objects.get(hash=hash)
+        except Room.DoesNotExist:
+            room = Room.objects.create(hash=hash)
 
         user1 = User.objects.get(username=username1)
         user2 = User.objects.get(username=username2)
 
         RoomMember.objects.get_or_create(room=room, member=user1)
         RoomMember.objects.get_or_create(room=room, member=user2)
-        return room.id
+        return room.pk

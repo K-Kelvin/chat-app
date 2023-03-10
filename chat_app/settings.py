@@ -31,7 +31,7 @@ ALLOWED_HOSTS = [HOST, "127.0.0.1", "localhost"]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = [ "https://k-kelvin-animated-space-invention-vwq7vvgw5vvfvx6-8000.preview.app.github.dev" ]
+CSRF_TRUSTED_ORIGINS = [ f'https://{HOST}' ]
 
 
 # Application definition
@@ -79,6 +79,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'custom_tags': 'chat_app.custom_tags',
+            },
         },
     },
 ]
