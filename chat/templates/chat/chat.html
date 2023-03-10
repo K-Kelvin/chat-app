@@ -3,6 +3,7 @@
 
 {% block head %}
 <script src="{% static 'checkProfanity.js' %}"></script>
+<script src="{% static 'moment.js' %}" defer></script>
 <script src="{% static 'helpers.js' %}" defer></script>
 {% endblock head %} 
 
@@ -77,12 +78,6 @@
 										scroll-behaviour: smooth;
 									"
 								>
-									{% comment %} {% include 'chat/message.html' with sent=True %} 
-									{% include 'chat/message.html' with sent=False %}
-									{% include 'chat/message.html' with sent=True %} 
-									{% include 'chat/message.html' with sent=False %}
-									{% include 'chat/message.html' with sent=True %} 
-									{% include 'chat/message.html' with sent=False %} {% endcomment %}
 									{% for message in messages %}
 										{% is_sent message request as sent %}
 										{% include 'chat/message.html' with sent=sent time=time message=message %} 
@@ -141,6 +136,9 @@
 
 {% block scripts %}
 <script>
+    const msgsContainer = document.querySelector("#messages-container");
+    msgsContainer.scrollTop = msgsContainer.scrollHeight;
+
 	const roomName = JSON.parse(
 		document.getElementById("room-name").textContent
 	);
