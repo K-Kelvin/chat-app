@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-7%w31jok+3exdks7ek^qm0$esx@=j#rld&uwxq_-j-t=b13w1)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-HOST = "k-kelvin-animated-space-invention-vwq7vvgw5vvfvx6-8000.preview.app.github.dev"
+HOST = "k-kelvin-redesigned-space-adventure-q6pgqq96xq936wvq-8000.preview.app.github.dev"
 ALLOWED_HOSTS = [HOST, "127.0.0.1", "localhost"]
 
 CORS_ORIGIN_ALLOW_ALL = True
