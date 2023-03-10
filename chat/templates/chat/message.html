@@ -1,10 +1,10 @@
 {% if sent %}
-<div class="d-flex flex-row justify-content-end mb-4" style="max-width: 60%; margin-left: auto;">
+<div class="d-flex flex-row justify-content-end mb-2" style="max-width: 60%; margin-left: auto;">
 	<div>
 		<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">
 			{{ message }}
 		</p>
-		{% comment %} <p class="small me-3 mb-3 rounded-3 text-muted">12:00 PM | Aug 13</p> {% endcomment %}
+		<p class="small me-3 mb-3 rounded-3 text-muted">{{ message.date|date:"H:i A | jS M" }}</p>
 	</div>
 	<img
 		src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
@@ -13,7 +13,7 @@
 	/>
 </div>
 {% else %}
-<div class="d-flex flex-row justify-content-start mb-4" style="max-width: 60%">
+<div class="d-flex flex-row justify-content-start mb-2" style="max-width: 60%">
 	<img
 		src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
 		alt="avatar 2"
@@ -26,7 +26,7 @@
 		>
 			{{ message }}
 		</p>
-		{% comment %} <p class="small ms-3 mb-3 rounded-3 text-muted float-end">12:00 PM | Aug 13</p> {% endcomment %}
+		<p class="small ms-3 mb-3 rounded-3 text-muted float-end">{{ message.date|date:"H:i A | jS M" }}</p>
 	</div>
 </div>
 {% endif %}

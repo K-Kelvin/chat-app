@@ -39,8 +39,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             recipient=self.recipient,
             message=message
         )
-        print(msg)
-        print(msg.date)
 
         # Send message to room group
         await self.channel_layer.group_send(
