@@ -1,5 +1,5 @@
 {% extends "base.html" %} 
-{% load static %} 
+{% load static custom_tags %} 
 
 {% block head %}
 <script src="{% static 'checkProfanity.js' %}"></script>
@@ -77,12 +77,16 @@
 										scroll-behaviour: smooth;
 									"
 								>
+									{% comment %} {% include 'chat/message.html' with sent=True %} 
+									{% include 'chat/message.html' with sent=False %}
 									{% include 'chat/message.html' with sent=True %} 
-									{% include 'chat/message.html' with send=False %}
+									{% include 'chat/message.html' with sent=False %}
 									{% include 'chat/message.html' with sent=True %} 
-									{% include 'chat/message.html' with send=False %}
-									{% include 'chat/message.html' with sent=True %} 
-									{% include 'chat/message.html' with send=False %}
+									{% include 'chat/message.html' with sent=False %} {% endcomment %}
+									{% for message in messages %}
+										{% is_sent message request as sent %}
+										{% include 'chat/message.html' with sent=sent time=time message=message %} 
+									{% endfor %}
 								</div>
 
 								{{ room_name|json_script:"room-name" }}
@@ -152,8 +156,7 @@
 
 			chatSocket.onmessage = function (e) {
 				const data = JSON.parse(e.data);
-				// document.querySelector("#chat-log").value += data.message + "\n";
-				console.log("data: ", data);
+				displayMessage(data.message)
 			};
 			
 			chatSocket.onclose = function (e) {
@@ -187,15 +190,14 @@
 						const badWords =  response["bad-words-list"].join("")
 						alert(`Language like "${badWords}" is not allowed on this platform!`)
 					}
-				}).catch(console.log);
-				
-				chatSocket.send(
-					JSON.stringify({
-						message: message,
-					})
+					chatSocket.send(
+						JSON.stringify({
+							message: censoredContent,
+						})
 					);
 					messageInputDom.value = "";
-				}; 
+				}).catch(console.log);
+			}; 
 		}
 	}
 	

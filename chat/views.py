@@ -6,7 +6,6 @@ from .models import Message, Room
 @login_required
 def index(request):
     ''' Initial page of the chat app'''
-    print(Room)
     users = User.objects.all().exclude(username=request.user) # other users except the current user
     return render(request, "chat/chat.html", {
         "users": users,
