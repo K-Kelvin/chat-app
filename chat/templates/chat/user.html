@@ -1,17 +1,20 @@
+{% load custom_tags %}
 <li class="chat-user p-2{% if not forloop.last %} border-bottom{% endif %}{% if room_name == user.username %} active{% endif %}">
 	<a href="{% url 'chat:room' room_name=user %}" class="d-flex justify-content-between">
 		<div class="d-flex flex-row">
 			<div>
 				<img
-					src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+					src={{user|get_profile_pic}}
 					alt="avatar"
-					class="d-flex align-self-center me-3"
-					width="60"
+					class="d-flex align-self-center me-3 p-img"
+					style="width: 60px; height: 60px; border-radius: 50%;"
+					width="60px"
+					height="60px"
 				/>
 				{% comment %} <span class="badge bg-success badge-dot"></span> {% endcomment %}
 			</div>
 			<div class="pt-1">
-				<p class="fw-bold mb-0">{{user}}</p>
+				<p class="fw-bold mb-0">{{user.username}}</p>
 				<p class="small text-muted">...</p>
 			</div>
 		</div>

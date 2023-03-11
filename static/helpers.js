@@ -1,6 +1,8 @@
-function constructMessage(message, sent) {
+// id=user_id, message=text string , sent=true|false
+function constructMessage(id, message, sent=true) {
     const msgDom = document.createElement("div");
     const date = moment().format('hh:mm A | Do MMM');
+    const profile_pic = `https://picsum.photos/id/${id}/100`;
     if (sent) {
         msgDom.className = "d-flex flex-row justify-content-end mb-2";
         msgDom.style.maxWidth = "60%";
@@ -12,17 +14,23 @@ function constructMessage(message, sent) {
                         <p class="small me-3 mb-3 rounded-3 text-muted">${date}</p>
 						</div>
 						<img
-							src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-							alt="avatar 1"
-							style="width: 45px; height: 100%"
+							src=${profile_pic}
+							alt="sender profile picture"
+                            class="p-img"
+                            style="width: 45px; height: 45px; border-radius: 50%;"
+                            width="45px"
+                            height="45px"
 						/>`
     } else {
         msgDom.className = "d-flex flex-row justify-content-start mb-2";
         msgDom.style.maxWidth = "60%";
         msgDom.innerHTML = `<img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                alt="avatar 2"
-                style="width: 45px; height: 100%"
+                src=${profile_pic}
+                alt="recipient profile picture"
+                class="p-img"
+                style="width: 45px; height: 45px; border-radius: 50%;"
+                width="45px"
+                height="45px"
             />
             <div>
                 <p
@@ -37,9 +45,9 @@ function constructMessage(message, sent) {
     return msgDom;
 }
 
-function displayMessage(message, sent) {
+function displayMessage(id, message, sent=true) {
     const msgsContainer = document.querySelector("#messages-container");
-    const newMessageDom = constructMessage(message, sent);
+    const newMessageDom = constructMessage(id, message, sent);
     msgsContainer.append(newMessageDom);
     msgsContainer.scrollTop = msgsContainer.scrollHeight
 }
