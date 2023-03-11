@@ -3,6 +3,17 @@
 
 {% block head %}
 <style>
+	:root {
+		--max-h: 100vh;
+		--bottom-height: calc(var(--max-h) - var(--top-nav-h));
+		--p: 1rem;
+		--msg-container-h: calc(var(--bottom-height) - var(--p) - var(--p));
+		--chat-top-h: 80px;
+		--chat-bottom-h: 100px;
+		--chat-messages-h: calc(var(--msg-container-h) - var(--chat-top-h) - var(--chat-bottom-h));
+		--chat-bg: #f6f7f8;
+		--bd-c: rgba(0, 0, 0, 0.5);
+	}
 	.chat-user:hover {
 		background-color: rgba(255, 165, 0, 0.2);
 	}
@@ -11,21 +22,28 @@
 		background-color: rgba(255, 165, 0, 0.5);
 	}
 	.bd-up-show {
-		border-right: none;
+		border: none;
 	}
 	@media (min-width: 768px) {
 		.bd-up-show {
-			border-right: 1px solid gray;
+			border-width: 1px;
+			border-style: solid;
+			border-color: rgba(0, 0, 0, .1);
 		}
-	}
-	:root {
-		--bottom-height: calc(100vh - var(--top-nav-h));
-		--p: 1rem;
-		--msg-container-h: calc(var(--bottom-height) - var(--p) - var(--p));
-		--left-scroll-h: calc(var(--msg-container-h) - 36px - 2rem);
+		:root { --max-h: 90vh; }
 	}
 	.control-height {
 		height: var(--msg-container-h);
+	}
+	.bd-c { border-color: rgba(0, 0, 0, .5);}
+	{% comment %} .x { --bs-gutter-x: 1.5rem; } {% endcomment %}
+	{% comment %} .cont-p { padding: 0 1rem;} {% endcomment %}
+	@media (max-width: 768px) { 
+		.x { --bs-gutter-x: 2rem; }
+		:root {
+			--msg-container-h: var(--bottom-height);
+		} 
+		.cont-p { padding: 0 1rem;}
 	}
 </style>
 <script src="{% static 'checkProfanity.js' %}"></script>
@@ -49,9 +67,9 @@
 	<div class="container" style="height: var(--bottom-height)">
 		<div class="row">
 			<div class="col-md-12">
-				<div class="card" id="chat3" style="border-radius: 15px;">
-					<div class="card-body">
-						<div class="row">
+				<div class="card pe-md-2 border-0" id="chat3" style="border-radius: 15px; overflow: hidden;">
+					<div class="card-body cont-p">
+						<div class="row x">
 							<div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0 {% if room_name %}d-none d-md-block{% endif %}">
 								<div class="p-3 bd-up-show" style="height: 100%; overflow: hidden;">
 									{% comment %} <div class="input-group rounded mb-3">
@@ -89,12 +107,27 @@
 							</div>
 
 							{% if room_name %}
-							<div class="col-md-6 col-lg-7 col-xl-8 control-height" style="position: relative;">
+							{{ room_name|json_script:"room-name" }}
+							<div class="col-md-6 col-lg-7 col-xl-8 ps-0 pe-0 control-height border bd-c" style="position: relative;">
+								<div class="d-flex justify-content-start align-items-center border-bottom bd-c" 
+									style="height: var(--chat-top-h); background-color: var(--chat-bg);"
+								>
+									<img
+										src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+										alt="recipient profile picture"
+										style="width: 60px; height: 60px; margin-right: 0.5rem;"
+									/>
+									<div class="d-flex flex-column gap-1">
+										<span>{{recipient.username}}</span>
+										<span>{{recipient.email}}</span>
+									</div>
+								</div>
+								
 								<div
 									id="messages-container"
 									data-mdb-perfect-scrollbar="true"
 									class="pt-3 pe-3 scroll-container"
-									style="position: relative; height: 400px;"
+									style="position: relative; height: var(--chat-messages-h);"
 								>
 									{% for message in messages %}
 										{% is_sent message request as sent %}
@@ -102,22 +135,22 @@
 									{% endfor %}
 								</div>
 
-								{{ room_name|json_script:"room-name" }}
-
 								<div
 									id="chat-input-container"
-									class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2"
+									class="text-muted d-flex justify-content-start align-items-center p-2 border-top bd-c"
 									style="
 										position: absolute;
-										bottom: 0;
 										left: 0;
+										bottom: 0;
 										width: 100%;
+										height: calc(var(--chat-bottom-h) - 2px);
+										background-color: var(--chat-bg);
 									"
 								>
 									<img
 										src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
 										alt="avatar 3"
-										style="width: 40px; height: 100%; margin-right: 4px;"
+										style="width: 40px; height: 40px; margin-right: 4px;"
 									/>
 									<input
 										type="text"
@@ -126,12 +159,6 @@
 										placeholder="Type message"
 									/>
 									<input id="chat-message-submit" type="button" value="Send" class="btn btn-primary" style="margin-left: 1rem;" />
-									<a class="ms-1 text-muted" href="#!"
-										><i class="fas fa-paperclip"></i
-									></a>
-									<a class="ms-3 text-muted" href="#!"
-										><i class="fas fa-smile"></i
-									></a>
 									<a class="ms-3" href="#!"
 										><i class="fas fa-paper-plane"></i
 									></a>
