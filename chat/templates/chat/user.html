@@ -1,5 +1,5 @@
-<li class="p-2 border-bottom">
-	<a href="{% url 'chat:room' room_name=username %}" class="d-flex justify-content-between">
+<li class="chat-user p-2{% if not forloop.last %} border-bottom{% endif %}{% if room_name == user.username %} active{% endif %}">
+	<a href="{% url 'chat:room' room_name=user %}" class="d-flex justify-content-between">
 		<div class="d-flex flex-row">
 			<div>
 				<img
@@ -8,10 +8,10 @@
 					class="d-flex align-self-center me-3"
 					width="60"
 				/>
-				<span class="badge bg-success badge-dot"></span>
+				{% comment %} <span class="badge bg-success badge-dot"></span> {% endcomment %}
 			</div>
 			<div class="pt-1">
-				<p class="fw-bold mb-0">{{username}}</p>
+				<p class="fw-bold mb-0">{{user}}</p>
 				<p class="small text-muted">...</p>
 			</div>
 		</div>

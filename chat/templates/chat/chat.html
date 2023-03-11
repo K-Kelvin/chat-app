@@ -2,6 +2,32 @@
 {% load static custom_tags %} 
 
 {% block head %}
+<style>
+	.chat-user:hover {
+		background-color: rgba(255, 165, 0, 0.2);
+	}
+	.chat-user.active {
+		border-radius: 1rem;
+		background-color: rgba(255, 165, 0, 0.5);
+	}
+	.bd-up-show {
+		border-right: none;
+	}
+	@media (min-width: 768px) {
+		.bd-up-show {
+			border-right: 1px solid gray;
+		}
+	}
+	:root {
+		--bottom-height: calc(100vh - var(--top-nav-h));
+		--p: 1rem;
+		--msg-container-h: calc(var(--bottom-height) - var(--p) - var(--p));
+		--left-scroll-h: calc(var(--msg-container-h) - 36px - 2rem);
+	}
+	.control-height {
+		height: var(--msg-container-h);
+	}
+</style>
 <script src="{% static 'checkProfanity.js' %}"></script>
 <script src="{% static 'moment.js' %}" defer></script>
 <script src="{% static 'helpers.js' %}" defer></script>
@@ -9,25 +35,25 @@
 
 {% block body %}
 <section style="background-color: var(--primary-color); height: 100%">
-	<div class="container" style="margin-bottom: 1rem;">
-		<div class="d-flex flex-row justify-content-between align-items-center">
-			<p class="text-white" style="font-size: 2rem; margin: 0;">Chat App</p>
-			<div class="d-flex flex-row align-items-center">
-				<span class="mx-4 text-white d-block">Hello, <b>{{user}}</b></span>
-				<a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-			</div>
+	<div 
+		class="container d-flex flex-row justify-content-between align-items-center" 
+		style="height: var(--top-nav-h);"
+	>
+		<p class="text-white" style="font-size: 2rem; margin: 0;">Chat App</p>
+		<div class="d-flex flex-row align-items-center">
+			<span class="mx-4 text-white d-block">Hello, <b>{{user}}</b></span>
+			<a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
 		</div>
 	</div>
-	<div class="container py-5 pt-1">
+	
+	<div class="container" style="height: var(--bottom-height)">
 		<div class="row">
 			<div class="col-md-12">
-				<div class="card" id="chat3" style="border-radius: 15px">
+				<div class="card" id="chat3" style="border-radius: 15px;">
 					<div class="card-body">
 						<div class="row">
-							<div
-								class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0"
-							>
-								<div class="p-3" style="border-right: 1px solid gray;">
+							<div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0 {% if room_name %}d-none d-md-block{% endif %}">
+								<div class="p-3 bd-up-show" style="height: 100%; overflow: hidden;">
 									{% comment %} <div class="input-group rounded mb-3">
 										<input
 											type="search"
@@ -44,21 +70,18 @@
 										</span>
 									</div> {% endcomment %}
 
-									<div class="mb-3" style="font-weight: bold; font-size: 1.5rem;">
+									<div class="mb-2" style="font-weight: bold; font-size: 1.5rem;">
 										Users
 									</div>
 
 									<div
 										data-mdb-perfect-scrollbar="true"
-										style="
-											position: relative;
-											height: 400px;
-											overflow: auto;
-										"
+										class="scroll-container"
+										style="position: relative; height: 90%;"
 									>
 										<ul class="list-unstyled mb-0">
 											{% for user in users %}
-											{% include 'chat/user.html' with username=user %}
+											{% include 'chat/user.html' with user=user %}
 											{% endfor %}
 										</ul>
 									</div>
@@ -66,17 +89,12 @@
 							</div>
 
 							{% if room_name %}
-							<div class="col-md-6 col-lg-7 col-xl-8" style="position: relative">
+							<div class="col-md-6 col-lg-7 col-xl-8 control-height" style="position: relative;">
 								<div
 									id="messages-container"
-									class="pt-3 pe-3"
 									data-mdb-perfect-scrollbar="true"
-									style="
-										position: relative;
-										height: 400px;
-										overflow: auto;
-										scroll-behaviour: smooth;
-									"
+									class="pt-3 pe-3 scroll-container"
+									style="position: relative; height: 400px;"
 								>
 									{% for message in messages %}
 										{% is_sent message request as sent %}
@@ -87,6 +105,7 @@
 								{{ room_name|json_script:"room-name" }}
 
 								<div
+									id="chat-input-container"
 									class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2"
 									style="
 										position: absolute;
@@ -119,7 +138,7 @@
 								</div>
 							</div>
 							{% else %}
-							<div class="col-md-6 col-lg-7 col-xl-8">
+							<div class="col-md-6 col-lg-7 col-xl-8 d-none d-md-block control-height">
 								<p style="text-align: center; margin-top: 10rem; font-weight: bold;">
 									Select user to Chat with
 								</p>
