@@ -9,13 +9,16 @@
 
 {% block body %}
 {% with username=form.username.value|default:'' email=form.email.value|default:'' password1=form.password1.value|default:'' password2=form.password2.value|default:'' %}
-<div class="auth-container mt-4">
+<div class="auth-container">
     <div class="auth-inner-container">
         {% include 'messages.html' %}
         {% comment %} <div class="mb-3">
             <img src="{% static 'img/logo.png' %}" alt="logo" width="200" height="auto" class="mx-auto d-block">
         </div> {% endcomment %}
-        <form method="post" action="" class="auth-form bd-highlight">
+        <div class="mb-3">
+            <h1 class="h2 text-center text-white">Chat App</h1>
+        </div>
+        <form method="post" action="" class="auth-form bd-highlight mt-4">
             {% csrf_token %}
             <h3 style="text-align: center; color: rgba(0,0,0,.65);">Register</h3>
             <div class="mb-3">

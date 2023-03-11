@@ -80,7 +80,7 @@
 								>
 									{% for message in messages %}
 										{% is_sent message request as sent %}
-										{% include 'chat/message.html' with sent=sent time=time message=message %} 
+										{% include 'chat/message.html' with sent=sent message=message %} 
 									{% endfor %}
 								</div>
 
@@ -135,9 +135,12 @@
 {% endblock body %} 
 
 {% block scripts %}
+{% if room_name %}
 <script>
     const msgsContainer = document.querySelector("#messages-container");
-    msgsContainer.scrollTop = msgsContainer.scrollHeight;
+	if (msgsContainer) {
+		msgsContainer.scrollTop = msgsContainer.scrollHeight;
+	}
 
 	const roomName = JSON.parse(
 		document.getElementById("room-name").textContent
@@ -201,4 +204,5 @@
 	
 	setupSocket();
 </script>
+{% endif %}
 {% endblock scripts %}
