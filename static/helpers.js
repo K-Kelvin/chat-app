@@ -52,3 +52,18 @@ function displayMessage(id, message, sent=true) {
     msgsContainer.append(newMessageDom);
     msgsContainer.scrollTop = msgsContainer.scrollHeight
 }
+
+function showAlert(text) {
+    const container = document.querySelector("#alert-messages");
+
+    container.innerHTML = `
+    <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
+        <span id="alert-text">${text}</span>
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+        ></button>
+    </div>`;
+}

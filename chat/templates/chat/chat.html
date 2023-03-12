@@ -48,6 +48,15 @@
 		.cont-p { padding: 0 1rem;}
 	}
 	.p-img { background-color: rgba(0, 0, 0, .3);}
+	.messages {
+		position: absolute;
+		z-index: 300;
+		width: 100%;
+		top: var(--top-nav-h);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 </style>
 <script src="{% static 'checkProfanity.js' %}"></script>
 <script src="{% static 'moment.js' %}" defer></script>
@@ -67,6 +76,8 @@
 		</div>
 	</div>
 	
+	<div id="alert-messages" class="messages"></div>
+
 	<div class="container" style="height: var(--bottom-height)">
 		<div class="row">
 			<div class="col-md-12">
@@ -264,8 +275,8 @@
 					displayMessage(userId, censoredContent, true);
 
 					if (isBad) {
-						const badWords =  response["bad-words-list"].join("")
-						alert(`Language like "${badWords}" is not allowed on this platform!`)
+						const badWords =  response["bad-words-list"].join(", ")
+						showAlert(`Language like "${badWords}" is not allowed on this platform!`)
 					}
 				}).catch(console.log)
 				.finally(() => {
