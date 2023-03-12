@@ -30,6 +30,7 @@
 			    --top-nav-h: 56px;
 			    --bottom-nav-h: 50px;
 			}
+			html { scroll-behaviour: smooth; }
 			body {
 			    margin: 0;
 			    padding: 0;
@@ -45,6 +46,11 @@
             a {
                 text-decoration: none;
             }
+			.scroll-container { overflow-y: auto; }
+			::-webkit-scrollbar { width: 10px;}
+			::-webkit-scrollbar-track { background: #f2f2f2; border-radius: 4px;}
+			::-webkit-scrollbar-thumb { background: var(--primary-color-light); border-radius: 4px;}
+			::-webkit-scrollbar-thumb:hover { background: var(--primary-color);}
 		</style>
 		{% block head %} {% endblock head %}
 	</head>

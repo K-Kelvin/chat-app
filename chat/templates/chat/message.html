@@ -1,23 +1,30 @@
+{% load tz custom_tags %}
 {% if sent %}
 <div class="d-flex flex-row justify-content-end mb-2" style="max-width: 60%; margin-left: auto;">
 	<div>
 		<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">
 			{{ message }}
 		</p>
-		<p class="small me-3 mb-3 rounded-3 text-muted">{{ message.date|date:"H:i A | jS M" }}</p>
+		<p class="small me-3 mb-3 rounded-3 text-muted">{{ message.date | localtime | date:"H:i A | jS M" }}</p>
 	</div>
 	<img
-		src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-		alt="avatar 1"
-		style="width: 45px; height: 100%"
+		src={{user|get_profile_pic}}
+		alt="sender profile picture"
+		class="p-img"
+		style="width: 45px; height: 45px; border-radius: 50%;"
+		width="45px"
+		height="45px"
 	/>
 </div>
 {% else %}
 <div class="d-flex flex-row justify-content-start mb-2" style="max-width: 60%">
 	<img
-		src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-		alt="avatar 2"
-		style="width: 45px; height: 100%"
+		src={{recipient|get_profile_pic}}
+		alt="recipient profile picture"
+		class="p-img"
+		style="width: 45px; height: 45px; border-radius: 50%;"
+		width="45px"
+		height="45px"
 	/>
 	<div>
 		<p
@@ -26,7 +33,7 @@
 		>
 			{{ message }}
 		</p>
-		<p class="small ms-3 mb-3 rounded-3 text-muted float-end">{{ message.date|date:"H:i A | jS M" }}</p>
+		<p class="small ms-3 mb-3 rounded-3 text-muted float-end">{{ message.date | localtime | date:"H:i A | jS M" }}</p>
 	</div>
 </div>
 {% endif %}

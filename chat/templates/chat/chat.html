@@ -2,6 +2,53 @@
 {% load static custom_tags %} 
 
 {% block head %}
+<style>
+	:root {
+		--max-h: 100vh;
+		--bottom-height: calc(var(--max-h) - var(--top-nav-h));
+		--p: 1rem;
+		--msg-container-h: calc(var(--bottom-height) - var(--p) - var(--p));
+		--chat-top-h: 80px;
+		--chat-bottom-h: 100px;
+		--chat-messages-h: calc(var(--msg-container-h) - var(--chat-top-h) - var(--chat-bottom-h));
+		--chat-bg: #f6f7f8;
+		--bd-c: rgba(0, 0, 0, 0.5);
+	}
+	.chat-user:hover {
+		background-color: rgba(255, 165, 0, 0.2);
+	}
+	.chat-user.active {
+		border-radius: 1rem;
+		background-color: rgba(255, 165, 0, 0.5);
+	}
+	.bd-up-show {
+		border: none;
+	}
+	.app-title { font-size: 1.25rem; font-weight: bold; }
+	@media (min-width: 768px) {
+		.bd-up-show {
+			border-width: 1px;
+			border-style: solid;
+			border-color: rgba(0, 0, 0, .1);
+		}
+		:root { --max-h: 90vh; }
+		.app-title { font-size: 2rem; }
+	}
+	.control-height {
+		height: var(--msg-container-h);
+	}
+	.bd-c { border-color: rgba(0, 0, 0, .5);}
+	{% comment %} .x { --bs-gutter-x: 1.5rem; } {% endcomment %}
+	{% comment %} .cont-p { padding: 0 1rem;} {% endcomment %}
+	@media (max-width: 768px) { 
+		.x { --bs-gutter-x: 2rem; }
+		:root {
+			--msg-container-h: var(--bottom-height);
+		} 
+		.cont-p { padding: 0 1rem;}
+	}
+	.p-img { background-color: rgba(0, 0, 0, .3);}
+</style>
 <script src="{% static 'checkProfanity.js' %}"></script>
 <script src="{% static 'moment.js' %}" defer></script>
 <script src="{% static 'helpers.js' %}" defer></script>
@@ -9,25 +56,25 @@
 
 {% block body %}
 <section style="background-color: var(--primary-color); height: 100%">
-	<div class="container" style="margin-bottom: 1rem;">
-		<div class="d-flex flex-row justify-content-between align-items-center">
-			<p class="text-white" style="font-size: 2rem; margin: 0;">Chat App</p>
-			<div class="d-flex flex-row align-items-center">
-				<span class="mx-4 text-white d-block">Hello, <b>{{user}}</b></span>
-				<a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-			</div>
+	<div 
+		class="container d-flex flex-row justify-content-between align-items-center" 
+		style="height: var(--top-nav-h);"
+	>
+		<p class="text-white app-title" style="margin: 0;">Chat App</p>
+		<div class="d-flex flex-row align-items-center">
+			<span class="mx-4 text-white d-block">Hello, <b>{{user}}</b></span>
+			<a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
 		</div>
 	</div>
-	<div class="container py-5 pt-1">
+	
+	<div class="container" style="height: var(--bottom-height)">
 		<div class="row">
 			<div class="col-md-12">
-				<div class="card" id="chat3" style="border-radius: 15px">
-					<div class="card-body">
-						<div class="row">
-							<div
-								class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0"
-							>
-								<div class="p-3" style="border-right: 1px solid gray;">
+				<div class="card pe-md-2 border-0" id="chat3" style="border-radius: 15px; overflow: hidden;">
+					<div class="card-body cont-p">
+						<div class="row x">
+							<div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0 {% if room_name %}d-none d-md-block{% endif %}">
+								<div class="p-3 bd-up-show" style="height: 100%; overflow: hidden;">
 									{% comment %} <div class="input-group rounded mb-3">
 										<input
 											type="search"
@@ -44,61 +91,81 @@
 										</span>
 									</div> {% endcomment %}
 
-									<div class="mb-3" style="font-weight: bold; font-size: 1.5rem;">
+									<div class="mb-2" style="font-weight: bold; font-size: 1.5rem;">
 										Users
 									</div>
 
 									<div
 										data-mdb-perfect-scrollbar="true"
-										style="
-											position: relative;
-											height: 400px;
-											overflow: auto;
-										"
+										class="scroll-container"
+										style="position: relative; height: 90%;"
 									>
 										<ul class="list-unstyled mb-0">
 											{% for user in users %}
-											{% include 'chat/user.html' with username=user %}
+											{% include 'chat/user.html' with user=user %}
 											{% endfor %}
 										</ul>
 									</div>
 								</div>
 							</div>
 
+							{{ user.id|json_script:"user-id" }}
 							{% if room_name %}
-							<div class="col-md-6 col-lg-7 col-xl-8" style="position: relative">
+							{{ room_name|json_script:"room-name" }}
+							<div class="col-md-6 col-lg-7 col-xl-8 ps-0 pe-0 control-height border bd-c" style="position: relative;">
+								<div class="d-flex justify-content-start align-items-center border-bottom bd-c" 
+									style="height: var(--chat-top-h); background-color: var(--chat-bg);"
+								>
+									<a href="{% url 'chat:index' %}" class="d-block text-black ms-2 me-3 align-self-start">
+										<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+											<path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+										</svg>
+									</a>
+									<img
+										src={{recipient|get_profile_pic}}
+										alt="recipient profile picture"
+										class="p-img"
+										style="width: 60px; height: 60px; margin-right: 0.5rem; border-radius: 50%;"
+										width="60px"
+										height="60px"
+									/>
+									<div class="d-flex flex-column gap-0">
+										<span class="font-weight-bold" style="font-weight: bold;">{{recipient.username}}</span>
+										<span class="text-muted">{{recipient.email}}</span>
+									</div>
+								</div>
+								
 								<div
 									id="messages-container"
-									class="pt-3 pe-3"
 									data-mdb-perfect-scrollbar="true"
-									style="
-										position: relative;
-										height: 400px;
-										overflow: auto;
-										scroll-behaviour: smooth;
-									"
+									class="pt-3 pe-3 scroll-container"
+									style="position: relative; height: var(--chat-messages-h);"
 								>
 									{% for message in messages %}
 										{% is_sent message request as sent %}
-										{% include 'chat/message.html' with sent=sent time=time message=message %} 
+										{% include 'chat/message.html' with sent=sent message=message %} 
 									{% endfor %}
 								</div>
 
-								{{ room_name|json_script:"room-name" }}
-
 								<div
-									class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2"
+									id="chat-input-container"
+									class="text-muted d-flex justify-content-start align-items-center p-2 border-top bd-c"
 									style="
 										position: absolute;
-										bottom: 0;
 										left: 0;
+										bottom: 0;
 										width: 100%;
+										height: calc(var(--chat-bottom-h) - 2px);
+										background-color: var(--chat-bg);
 									"
 								>
 									<img
-										src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-										alt="avatar 3"
-										style="width: 40px; height: 100%; margin-right: 4px;"
+										src={{user|get_profile_pic}}
+										class="p-img"
+										alt="my profile picture"
+										style="width: 40px; height: 40px; margin-right: 4px; border-radius: 50%;"
+										width="40px"
+										height="40px"
 									/>
 									<input
 										type="text"
@@ -107,20 +174,14 @@
 										placeholder="Type message"
 									/>
 									<input id="chat-message-submit" type="button" value="Send" class="btn btn-primary" style="margin-left: 1rem;" />
-									<a class="ms-1 text-muted" href="#!"
-										><i class="fas fa-paperclip"></i
-									></a>
-									<a class="ms-3 text-muted" href="#!"
-										><i class="fas fa-smile"></i
-									></a>
-									<a class="ms-3" href="#!"
+									{% comment %} <a class="ms-3" href="#!"
 										><i class="fas fa-paper-plane"></i
-									></a>
+									></a> {% endcomment %}
 								</div>
 							</div>
 							{% else %}
-							<div class="col-md-6 col-lg-7 col-xl-8">
-								<p style="text-align: center; margin-top: 10rem; font-weight: bold;">
+							<div class="col-md-6 col-lg-7 col-xl-8 d-none d-md-block control-height">
+								<p style="text-align: center; margin-top: 10rem; font-weight: bold; font-size: 1.5rem;">
 									Select user to Chat with
 								</p>
 							</div>
@@ -135,12 +196,18 @@
 {% endblock body %} 
 
 {% block scripts %}
+{% if room_name %}
 <script>
     const msgsContainer = document.querySelector("#messages-container");
-    msgsContainer.scrollTop = msgsContainer.scrollHeight;
+	if (msgsContainer) {
+		msgsContainer.scrollTop = msgsContainer.scrollHeight;
+	}
 
 	const roomName = JSON.parse(
 		document.getElementById("room-name").textContent
+	);
+	const userId = JSON.parse(
+		document.getElementById("user-id").textContent
 	);
 
 	let protocal = "ws://";
@@ -159,7 +226,7 @@
 			
 			chatSocket.onclose = function (e) {
 				console.error("Chat socket closed unexpectedly, restarting...");
-				setupSocket();
+				setTimeout(() => setupSocket(), 2000);
 			};
 
 			document.querySelector("#chat-message-input").focus();
@@ -171,8 +238,6 @@
 			};
 			
 			document.querySelector("#chat-message-submit").onclick = function (e) {
-				const msgsContainer = document.querySelector("#messages-container");
-
 				const messageInputDom = document.querySelector("#chat-message-input");
 				const message = messageInputDom.value;
 				
@@ -180,20 +245,18 @@
 					const isBad = response["is-bad"]
 					const censoredContent = response["censored-content"]				
 					
-					const msgDom = constructMessage(censoredContent, true);
-					msgsContainer.append(msgDom);
-					msgsContainer.scrollTop = msgsContainer.scrollHeight
-					
-					if (isBad) {
-						const badWords =  response["bad-words-list"].join("")
-						alert(`Language like "${badWords}" is not allowed on this platform!`)
-					}
 					chatSocket.send(
 						JSON.stringify({
 							message: censoredContent,
 						})
 					);
+					displayMessage(userId, censoredContent, true);
+
 					messageInputDom.value = "";
+					if (isBad) {
+						const badWords =  response["bad-words-list"].join("")
+						alert(`Language like "${badWords}" is not allowed on this platform!`)
+					}
 				}).catch(console.log);
 			}; 
 		}
@@ -201,4 +264,5 @@
 	
 	setupSocket();
 </script>
+{% endif %}
 {% endblock scripts %}
