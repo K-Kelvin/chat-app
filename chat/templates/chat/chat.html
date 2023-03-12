@@ -4,7 +4,7 @@
 {% block head %}
 <style>
 	:root {
-		--max-h: 100vh;
+		--max-h: calc(100vh - 56px);
 		--bottom-height: calc(var(--max-h) - var(--top-nav-h));
 		--p: 1rem;
 		--msg-container-h: calc(var(--bottom-height) - var(--p) - var(--p));
@@ -38,8 +38,6 @@
 		height: var(--msg-container-h);
 	}
 	.bd-c { border-color: rgba(0, 0, 0, .5);}
-	{% comment %} .x { --bs-gutter-x: 1.5rem; } {% endcomment %}
-	{% comment %} .cont-p { padding: 0 1rem;} {% endcomment %}
 	@media (max-width: 768px) { 
 		.x { --bs-gutter-x: 2rem; }
 		:root {
@@ -64,10 +62,10 @@
 {% endblock head %} 
 
 {% block body %}
-<section style="background-color: var(--primary-color); height: 100%">
+<section style="background-color: var(--primary-color); height: 100%; position: relative;">
 	<div 
 		class="container d-flex flex-row justify-content-between align-items-center" 
-		style="height: var(--top-nav-h);"
+		style="height: var(--top-nav-h); top: 0;"
 	>
 		<p class="text-white app-title" style="margin: 0;">Chat App</p>
 		<div class="d-flex flex-row align-items-center">
@@ -184,13 +182,13 @@
 										class="form-control form-control-lg"
 										id="chat-message-input"
 										placeholder="Type message"
-										style="width: auto; flex-grow: 1;"
+										style="width: auto; flex-grow: 1; flex-shrink: 1; min-width: 50px;"
 									/>
 									<button id="chat-message-submit" type="button" class="btn btn-primary" style="margin-left: 0.25rem; border-radius: 8px;">
 										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
 											<path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
 										</svg>
-										Send
+										<span class="d-none d-sm-inline-block">Send<span>
 									</button>
 								</div>
 							</div>
@@ -236,7 +234,8 @@
 
 			chatSocket.onmessage = function (e) {
 				const data = JSON.parse(e.data);
-				displayMessage(data.message)
+				console.log(data);
+				displayMessage(userId, data.message, false);
 			};
 			
 			chatSocket.onclose = function (e) {
@@ -259,7 +258,10 @@
 
 				if (!message.trim()) return
 				
-				btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+				btnSubmit.innerHTML = `
+					<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 
+					<span class="d-none d-sm-inline-block">Loading...<span>
+				`;
 				btnSubmit.disabled = true;
 
 				checkProfanity(message).then((response) => {
@@ -280,9 +282,12 @@
 					}
 				}).catch(console.log)
 				.finally(() => {
-					btnSubmit.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
-						<path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
-					</svg> Send`;
+					btnSubmit.innerHTML = `
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+							<path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+						</svg>
+						<span class="d-none d-sm-inline-block">Send<span>
+					`;
 					btnSubmit.disabled = false;
 				});
 			}; 
