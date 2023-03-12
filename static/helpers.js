@@ -2,7 +2,8 @@
 function constructMessage(id, message, sent=true) {
     const msgDom = document.createElement("div");
     const date = moment().format('hh:mm A | Do MMM');
-    const profile_pic = `https://picsum.photos/id/${id}/100`;
+    const uid = +id * 10; 
+    const profile_pic = `https://picsum.photos/id/${uid}/100`;
     if (sent) {
         msgDom.className = "d-flex flex-row justify-content-end mb-2";
         msgDom.style.maxWidth = "60%";
@@ -50,4 +51,19 @@ function displayMessage(id, message, sent=true) {
     const newMessageDom = constructMessage(id, message, sent);
     msgsContainer.append(newMessageDom);
     msgsContainer.scrollTop = msgsContainer.scrollHeight
+}
+
+function showAlert(text) {
+    const container = document.querySelector("#alert-messages");
+
+    container.innerHTML = `
+    <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
+        <span id="alert-text">${text}</span>
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+        ></button>
+    </div>`;
 }

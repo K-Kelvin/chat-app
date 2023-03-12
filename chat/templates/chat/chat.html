@@ -48,6 +48,15 @@
 		.cont-p { padding: 0 1rem;}
 	}
 	.p-img { background-color: rgba(0, 0, 0, .3);}
+	.messages {
+		position: absolute;
+		z-index: 300;
+		width: 100%;
+		top: var(--top-nav-h);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 </style>
 <script src="{% static 'checkProfanity.js' %}"></script>
 <script src="{% static 'moment.js' %}" defer></script>
@@ -67,6 +76,8 @@
 		</div>
 	</div>
 	
+	<div id="alert-messages" class="messages"></div>
+
 	<div class="container" style="height: var(--bottom-height)">
 		<div class="row">
 			<div class="col-md-12">
@@ -116,7 +127,7 @@
 								<div class="d-flex justify-content-start align-items-center border-bottom bd-c" 
 									style="height: var(--chat-top-h); background-color: var(--chat-bg);"
 								>
-									<a href="{% url 'chat:index' %}" class="d-block text-black ms-2 me-3 align-self-start">
+									<a href="{% url 'chat:index' %}" class="d-block text-black align-self-start" style="margin: 12px 12px 0;">
 										<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
 											<path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
 										</svg>
@@ -138,7 +149,7 @@
 								<div
 									id="messages-container"
 									data-mdb-perfect-scrollbar="true"
-									class="pt-3 pe-3 scroll-container"
+									class="pt-3 px-2 scroll-container"
 									style="position: relative; height: var(--chat-messages-h);"
 								>
 									{% for message in messages %}
@@ -149,7 +160,7 @@
 
 								<div
 									id="chat-input-container"
-									class="text-muted d-flex justify-content-start align-items-center p-2 border-top bd-c"
+									class="text-muted d-flex justify-content-between align-items-center p-2 border-top bd-c"
 									style="
 										position: absolute;
 										left: 0;
@@ -157,13 +168,14 @@
 										width: 100%;
 										height: calc(var(--chat-bottom-h) - 2px);
 										background-color: var(--chat-bg);
+										gap: 0.25rem;
 									"
 								>
 									<img
 										src={{user|get_profile_pic}}
 										class="p-img"
 										alt="my profile picture"
-										style="width: 40px; height: 40px; margin-right: 4px; border-radius: 50%;"
+										style="width: 40px; height: 40px; border-radius: 50%; display: block;"
 										width="40px"
 										height="40px"
 									/>
@@ -172,11 +184,14 @@
 										class="form-control form-control-lg"
 										id="chat-message-input"
 										placeholder="Type message"
+										style="width: auto; flex-grow: 1;"
 									/>
-									<input id="chat-message-submit" type="button" value="Send" class="btn btn-primary" style="margin-left: 1rem;" />
-									{% comment %} <a class="ms-3" href="#!"
-										><i class="fas fa-paper-plane"></i
-									></a> {% endcomment %}
+									<button id="chat-message-submit" type="button" class="btn btn-primary" style="margin-left: 0.25rem; border-radius: 8px;">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+											<path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+										</svg>
+										Send
+									</button>
 								</div>
 							</div>
 							{% else %}
@@ -226,7 +241,7 @@
 			
 			chatSocket.onclose = function (e) {
 				console.error("Chat socket closed unexpectedly, restarting...");
-				setTimeout(() => setupSocket(), 2000);
+				setTimeout(() => setupSocket(), 3000);
 			};
 
 			document.querySelector("#chat-message-input").focus();
@@ -237,10 +252,16 @@
 				}
 			};
 			
-			document.querySelector("#chat-message-submit").onclick = function (e) {
+			const btnSubmit = document.querySelector("#chat-message-submit");
+			btnSubmit.onclick = function (e) {
 				const messageInputDom = document.querySelector("#chat-message-input");
 				const message = messageInputDom.value;
+
+				if (!message.trim()) return
 				
+				btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+				btnSubmit.disabled = true;
+
 				checkProfanity(message).then((response) => {
 					const isBad = response["is-bad"]
 					const censoredContent = response["censored-content"]				
@@ -250,14 +271,20 @@
 							message: censoredContent,
 						})
 					);
+					messageInputDom.value = "";
 					displayMessage(userId, censoredContent, true);
 
-					messageInputDom.value = "";
 					if (isBad) {
-						const badWords =  response["bad-words-list"].join("")
-						alert(`Language like "${badWords}" is not allowed on this platform!`)
+						const badWords =  response["bad-words-list"].join(", ")
+						showAlert(`Language like "${badWords}" is not allowed on this platform!`)
 					}
-				}).catch(console.log);
+				}).catch(console.log)
+				.finally(() => {
+					btnSubmit.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+						<path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+					</svg> Send`;
+					btnSubmit.disabled = false;
+				});
 			}; 
 		}
 	}
